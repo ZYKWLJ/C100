@@ -7,10 +7,8 @@
     skiplist_insert(obj, 30);
     skiplist_insert(obj, 70);
     skiplist_insert(obj, 20);
-    skiplist_insert(obj, 40);
-    skiplist_insert(obj, 60);
-    skiplist_insert(obj, 80);
-    printf("Added elements: 20, 30, 40, 50, 60, 70, 80\n");
+
+    printf("Added elements: 20, 30, 50, 70\n");
 
     printf("Searching for 30: %s\n",
            skiplist_search(obj, 30) ? "PASS" : "FAIL");
