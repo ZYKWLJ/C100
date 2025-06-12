@@ -101,6 +101,8 @@ void menu()
     author();
 }
 
+
+
 void argc1()
 {
     menu();
@@ -121,8 +123,8 @@ void argc3(char *argv[])
     }
     else
     {
-        printf("Error command\n\n");
-        menu();
+        printf("Error command\n");
+       print_help_curd();
     }
 }
 // hd add/update key value
@@ -138,8 +140,8 @@ void argc4(char *argv[])
     }
     else
     {
-        printf("Error command\n\n");
-        menu();
+        printf("Error command\n");
+       print_help_curd();
     }
 }
 
@@ -165,7 +167,7 @@ void parser(int argc, char *argv[])
     }
     else
     {
-        printf("Error command\n\n");
-        menu();
+        printf("Error command\n");
+       print_help_curd();
     }
 }
