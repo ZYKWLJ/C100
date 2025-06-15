@@ -253,23 +253,13 @@ bool skiplist_erase(skiplist *obj, string target_key)
         /* 对第 i 层的状态进行更新，将 forward 指向被删除节点的下一跳 */
         update[i]->forward[i] = curr->forward[i];
     }
-    // skiplist_node_free(curr); /*回收删除了的节点*/
+    skiplist_node_free(curr); /*回收删除了的节点*/
 /* 更新当前的 level,很简单，直到head节点后面的next节点不为NULL即可 */
-#if 1
     while (obj->level > 1 && obj->head->forward[obj->level - 1] == NULL)
     {
         obj->level--;
     }
-#else
-    while (obj->level > 1)
-    {
-        if (obj->head->forward[obj->level - 1] != NULL)
-        {
-            break;
-        }
-        obj->level--;
-    }
-#endif
+
     // print_skip_list(obj);
     printf("delete key %s succeed!\n", target_key);
     return true;
