@@ -1,6 +1,5 @@
 #ifndef INCLUDE_H_
 #define INCLUDE_H_
-
 #include "skiplist_kv.h"
 #include "text_display_width.h"
 #include "text_print_help.h"
