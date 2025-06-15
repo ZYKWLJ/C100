@@ -24,20 +24,22 @@ typedef struct bitcask_index_offset_size_
 {
     int offset; /*4b,全局变量*/
     int size;   /*4b，单独计算数据*/
-} bitcask_index_offset_size_t;
+} bitcask_single_index_offset_size_t;
 
-bitcask_index_offset_size_t *bitcask_index_offset_size_t_init(data_t *data);
-bitcask_index_offset_size_t *bitcask_index_offset_size_t_print(bitcask_index_offset_size_t *);
+bitcask_single_index_offset_size_t *bitcask_single_index_offset_size_t_init(data_t *data);
+bitcask_single_index_offset_size_t *bitcask_single_index_offset_size_t_print(bitcask_single_index_offset_size_t *);
 
 /**
  * data descp: 索引系统
  */
-typedef struct bitcask_index_
+typedef struct bitcask_single_index_
 {
     string key; /*4b*/
-    bitcask_index_offset_size_t *offset_size;
-} bitcask_index_t;
+    bitcask_single_index_offset_size_t *offset_size;
+} bitcask_single_index_t;
 
+bitcask_single_index_t *bitcask_single_index_t_init(string key, bitcask_single_index_offset_size_t *offset_size);
+bitcask_single_index_t *bitcask_single_index_t_print(bitcask_single_index_t *bitcask_index);
 /**
  * data descp: 日志文件系统
  */
@@ -52,7 +54,7 @@ typedef struct bitcask_log_
  */
 typedef struct bitcask_
 {
-    bitcask_index_t *index;
+    bitcask_single_index_t *index;
     bitcask_log_t *log;
 } bitcask_t;
 

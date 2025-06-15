@@ -11,7 +11,7 @@ void *map[MAX_SIZE_MAP];
 /**
 * func descp: 每个字符的码值余下容量即可作为哈希函数
 */
-int key_func(string key);
+int hash_func(string key);
 void map_conflict_list_method();
 
 #endif /* MAP_H_ */

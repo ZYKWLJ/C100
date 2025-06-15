@@ -6,7 +6,7 @@ void list_node_print(list_node_t *list_node, list_node_type_t list_node_type)
     switch (list_node_type)
     {
     case BITCAST_INDEX_OFFSET_SIZE_T:
-        bitcask_index_offset_size_t_print((bitcask_index_offset_size_t *)list_node->pointer);
+        bitcask_single_index_offset_size_t_print((bitcask_single_index_offset_size_t *)list_node->pointer);
         break;
     default:
         break;
@@ -20,7 +20,7 @@ list_node_t *list_node_init(void *pointer, list_node_type_t list_node_type)
     case BITCAST_INDEX_OFFSET_SIZE_T:
     {
         node->next = NULL;
-        node->pointer = (bitcask_index_offset_size_t *)pointer;
+        node->pointer = (bitcask_single_index_offset_size_t *)pointer;
         // printf("init bitcask_index_offset_size_t node :\n"); /* code */
         // bitcask_index_offset_size_t_print((bitcask_index_offset_size_t *)node->pointer);
         break;
@@ -43,7 +43,7 @@ void list_print(list_t *list, list_node_type_t list_node_type)
 {
     if (list->head == NULL)
     {
-        printf("list is empty\n");
+        // printf("list is empty\n");
         return;
     }
     int count = 0;
@@ -52,7 +52,7 @@ void list_print(list_t *list, list_node_type_t list_node_type)
     {
     case BITCAST_INDEX_OFFSET_SIZE_T:
     {
-        printf("list_node_type_t:BITCAST_INDEX_OFFSET_SIZE_T:\n");
+        // printf("list_node_type_t:BITCAST_INDEX_OFFSET_SIZE_T:\n");
         while (node)
         {
 
@@ -121,7 +121,7 @@ void list_append(list_t *list, void *prepend_pointer, list_node_type_t list_node
 
     // node->next = NULL;/*有没有无所谓，初始化中有了*/
 }
-#define MAIN
+// #define MAIN
 #ifdef MAIN
 int main(void)
 {
@@ -133,7 +133,6 @@ int main(void)
     bitcask_index_offset_size_t_print(os1);
     list_t *list = list_init();
     list->head = list_node_init(os1, BITCAST_INDEX_OFFSET_SIZE_T);
-    // list->head = list_node_init(os2, BITCAST_INDEX_OFFSET_SIZE_T);
     list_print(list, BITCAST_INDEX_OFFSET_SIZE_T);
     list_append(list, os2, BITCAST_INDEX_OFFSET_SIZE_T);
     list_append(list, os2, BITCAST_INDEX_OFFSET_SIZE_T);

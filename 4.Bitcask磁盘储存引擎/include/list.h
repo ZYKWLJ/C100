@@ -18,7 +18,7 @@ typedef struct list_node_
 
 void list_node_print(list_node_t *node, list_node_type_t list_node_type);
 
-
+list_node_t *list_node_init(void *pointer, list_node_type_t list_node_type);
 void list_node_free(list_node_t *node);
 /**
  * data descp: 链表的定义就是头结点就好了！
@@ -36,7 +36,7 @@ list_t *list_init();
 // bool list_search(list_t *head, int target);
 
 // void list_prepend(list_t *head, int prepend_pointer);
-
+void list_append(list_t *list, void *prepend_pointer, list_node_type_t list_node_type);
 #if 0
 int main(void)
 {
