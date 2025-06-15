@@ -2,7 +2,7 @@
 #define BITCASK_H_
 
 #include <stdio.h>
-typedef char *string;
+#define MAX_DATA_SIZE 10000
 
 /**
  * data descp: 真实存储的数据
@@ -30,7 +30,7 @@ bitcask_single_index_offset_size_t *bitcask_single_index_offset_size_t_init(data
 bitcask_single_index_offset_size_t *bitcask_single_index_offset_size_t_print(bitcask_single_index_offset_size_t *);
 
 /**
- * data descp: 索引系统
+ * data descp: 单个索引
  */
 typedef struct bitcask_single_index_
 {
@@ -40,6 +40,20 @@ typedef struct bitcask_single_index_
 
 bitcask_single_index_t *bitcask_single_index_t_init(string key, bitcask_single_index_offset_size_t *offset_size);
 bitcask_single_index_t *bitcask_single_index_t_print(bitcask_single_index_t *bitcask_index);
+
+/**
+ * data descp: 索引系统——即索引K-V，这里使用hash套壳
+ */
+typedef struct bitcask_index_
+{
+    /**
+     * data descp: 10000个槽的哈希表
+     */
+    list_t *map[MAX_DATA_SIZE];
+} bitcask_index_t;
+
+bitcask_index_t *bitcask_index_t_init();
+void bitcask_index_print(bitcask_index_t *bitcask_index);
 /**
  * data descp: 日志文件系统
  */

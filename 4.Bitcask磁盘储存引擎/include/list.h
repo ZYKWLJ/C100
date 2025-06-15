@@ -3,10 +3,13 @@
 
 #include "include.h"
 #include <stdbool.h>
+typedef char *string;
 typedef enum list_node_type_
 {
     BITCAST_INDEX_OFFSET_SIZE_T,
 } list_node_type_t;
+
+
 /**
  * data descp: 存放任何指针的链表节点
  */

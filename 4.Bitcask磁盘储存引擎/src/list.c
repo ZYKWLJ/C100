@@ -1,5 +1,6 @@
 #include "../include/include.h"
 extern int offset;
+extern int total_data;
 
 void list_node_print(list_node_t *list_node, list_node_type_t list_node_type)
 {
@@ -61,12 +62,13 @@ void list_print(list_t *list, list_node_type_t list_node_type)
             {
                 printf("->");
             }
-            if ((count + 1) % 4 == 0)
+            if ((count + 1) % 20 == 0)
             {
                 printf("\n");
             }
             count++;
             node = node->next;
+            total_data++;
         }
         printf("\n");
     }
@@ -106,13 +108,21 @@ void list_append(list_t *list, void *prepend_pointer, list_node_type_t list_node
     {
     case BITCAST_INDEX_OFFSET_SIZE_T:
     {
+
         list_node_t *node = (list_node_t *)list_node_init(prepend_pointer, list_node_type);
+
+        // printf("list_append begin....\n");
         list_node_t *curr = list->head;
+        // printf("list=%p\n",list);
+        // printf("curr=%p\n ",curr);
         while (curr->next)
         {
+            // printf("list_append begin1....\n");
+
             curr = curr->next;
         }
         curr->next = node;
+        // printf("list_append over....\n");
         break;
     }
     default:

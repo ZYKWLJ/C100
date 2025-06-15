@@ -2,12 +2,16 @@
 
 #include <stdio.h>
 // #include "bitcask.h"
+// #include "bitcask.h"
 typedef char *string;
-
+int total_data = 0;
 data_t *data_t_init(string key, string value)
 {
     data_t *data = (data_t *)malloc(sizeof(data_t));
-    data->key =strdup(key);
+    /**
+     * data descp: 注意这里依然是易错点，一定要使用strdup
+     */
+    data->key = strdup(key);
     data->value = strdup(value);
     data->size = strlen(value);
     return data;
@@ -50,15 +54,50 @@ bitcask_single_index_t *bitcask_single_index_t_print(bitcask_single_index_t *bit
     bitcask_single_index_offset_size_t_print(bitcask_index->offset_size);
     printf("\n");
 }
+bitcask_index_t *bitcask_index_t_init()
+{
+    bitcask_index_t *bitcask_index = (bitcask_index_t *)malloc(sizeof(struct bitcask_index_));
 
-// #define MAIN
+    for (int i = 0; i < MAX_DATA_SIZE; i++)
+    {
+        /**
+         * data descp: 每一个槽位都是一个链表
+         */
+        bitcask_index->map[i] = NULL;
+    }
+    return bitcask_index;
+}
+void bitcask_index_print(bitcask_index_t *bitcask_index)
+{
+    int map_data_count = 0;
+    for (int i = 0; i < MAX_DATA_SIZE; i++)
+    {
+        if (bitcask_index->map[i])
+        {
+            printf("index:\n");
+            list_print((list_t *)bitcask_index->map[i], BITCAST_INDEX_OFFSET_SIZE_T);
+            map_data_count++;
+        }
+    }
+    printf("data_map_count=%d\n", map_data_count);
+    printf("data_total_count=%d\n", total_data);
+}
+#define MAIN
 #ifdef MAIN
 int main(void)
 {
-    data_t *data1 = data_t_init("hello", "world");
-    bitcask_index_offset_size_t *os1 = bitcask_index_offset_size_t_init(data1);
-    data_t_print(data1);
-    bitcask_index_offset_size_t_print(os1);
+    bitcask_index_t *bitcask_index = bitcask_index_t_init();
+    for (int i = 0; i < 100; i++)
+    {
+        char key[10];
+        sprintf(key, "k-%d", i);
+        char value[10];
+        sprintf(value, "v-%d", i);
+        data_t *data1 = data_t_init(key, value);
+        bitcask_single_index_offset_size_t *os1 = bitcask_single_index_offset_size_t_init(data1);
+        map_insert(bitcask_index->map, bitcask_single_index_t_init(data1->key, os1), BITCAST_INDEX_OFFSET_SIZE_T);
+    }
+    bitcask_index_print(bitcask_index);
     return 0;
 }
 
