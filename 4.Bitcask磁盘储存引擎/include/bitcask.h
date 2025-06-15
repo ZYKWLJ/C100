@@ -1,19 +1,33 @@
 #ifndef BITCASK_H_
 #define BITCASK_H_
 
-
-
 #include <stdio.h>
 typedef char *string;
 
 /**
- * data descp: 磁盘偏移和数据大小
+ * data descp: 真实存储的数据
+ */
+typedef struct data_
+{
+    string key;
+    string value;
+    int size;
+} data_t;
+
+data_t *data_t_init(string key, string value);
+
+void *data_t_print(data_t *data);
+/**
+ * data descp: 数据在磁盘上的偏移和数据大小
  */
 typedef struct bitcask_index_offset_size_
 {
-    int offset; /*4b*/
-    int size;   /*4b*/
+    int offset; /*4b,全局变量*/
+    int size;   /*4b，单独计算数据*/
 } bitcask_index_offset_size_t;
+
+bitcask_index_offset_size_t *bitcask_index_offset_size_t_init(data_t *data);
+bitcask_index_offset_size_t *bitcask_index_offset_size_t_print(bitcask_index_offset_size_t *);
 
 /**
  * data descp: 索引系统
@@ -41,11 +55,5 @@ typedef struct bitcask_
     bitcask_index_t *index;
     bitcask_log_t *log;
 } bitcask_t;
-
-int main(void)
-{
-
-    return 0;
-}
 
 #endif /* BITCASK_H_ */

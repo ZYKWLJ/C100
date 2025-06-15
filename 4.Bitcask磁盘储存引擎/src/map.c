@@ -25,7 +25,7 @@ void print_map_key(string key){
     list_node_t* node=(list_node_t* )map[key_func(key)];
     printf("%s\n",key);
     while(node){
-        printf("%d",node->pointer);
+        printf("%p",node->pointer);
     }
 }
 void map_conflict_list_method(string key, bitcask_index_offset_size_t *offset_size)
@@ -44,8 +44,13 @@ void map_insert(bitcask_index_t *bitcask_index)
     }
     map[key_func(bitcask_index->key)] = bitcask_index->offset_size;
 }
+
+// #define MAIN
+#ifdef MAIN
 int main(void)
 {
 
     return 0;
 }
+
+#endif

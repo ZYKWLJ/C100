@@ -1,31 +1,34 @@
 #include "../include/include.h"
+extern int offset;
 
-
-/**
- * data descp: 存放指针的链表节点
- */
-typedef struct list_node_
+void list_node_print(list_node_t *list_node, list_node_type_t list_node_type)
 {
-    struct list_node_ *next;
-    void *pointer; /*存放任何数据的指针*/
-} list_node_t;
-
-void list_node_print(list_node_t *node)
-{
-    /*
-    printf("node addr:%p\n", node);
-    printf("node next addr:%p\n", node->next);
-    printf("node pointer:%d\n", node->pointer);
-    printf("\n");
-    */
-    printf("%p[%p]-[%p]", node->pointer, node, node->next);
+    switch (list_node_type)
+    {
+    case BITCAST_INDEX_OFFSET_SIZE_T:
+        bitcask_index_offset_size_t_print((bitcask_index_offset_size_t *)list_node->pointer);
+        break;
+    default:
+        break;
+    }
 }
-list_node_t *list_node_init(int pointer)
+list_node_t *list_node_init(void *pointer, list_node_type_t list_node_type)
 {
     list_node_t *node = (list_node_t *)malloc(sizeof(struct list_node_));
-    node->next = NULL;
-    node->pointer = pointer;
-    // printf("init node pointer:%d\n", node->pointer);
+    switch (list_node_type)
+    {
+    case BITCAST_INDEX_OFFSET_SIZE_T:
+    {
+        node->next = NULL;
+        node->pointer = (bitcask_index_offset_size_t *)pointer;
+        // printf("init bitcask_index_offset_size_t node :\n"); /* code */
+        // bitcask_index_offset_size_t_print((bitcask_index_offset_size_t *)node->pointer);
+        break;
+    }
+    default:
+        break;
+    }
+
     return node;
 }
 
@@ -36,80 +39,112 @@ void list_node_free(list_node_t *node)
     printf("free node\n");
 }
 
-/**
- * data descp: 链表的定义就是头结点就好了！
- */
-typedef struct list_
+void list_print(list_t *list, list_node_type_t list_node_type)
 {
-    struct list_node_ *head;
-
-} list;
-
-void list_print(list *node)
-{
-    int count = 0;
-    while (node->head)
+    if (list->head == NULL)
     {
-        list_node_print(node->head);
-        if (node->head->next)
+        printf("list is empty\n");
+        return;
+    }
+    int count = 0;
+    list_node_t *node = list->head;
+    switch (list_node_type)
+    {
+    case BITCAST_INDEX_OFFSET_SIZE_T:
+    {
+        printf("list_node_type_t:BITCAST_INDEX_OFFSET_SIZE_T:\n");
+        while (node)
         {
-            printf("->");
+
+            list_node_print(node, list_node_type);
+            if (node->next)
+            {
+                printf("->");
+            }
+            if ((count + 1) % 4 == 0)
+            {
+                printf("\n");
+            }
+            count++;
+            node = node->next;
         }
-        if ((count + 1) % 4 == 0)
-        {
-            printf("\n");
-        }
-        count++;
-        node->head = node->head->next;
+        printf("\n");
+    }
+    /* code */
+    break;
+
+    default:
+        break;
     }
 }
-list *list_init()
+
+list_t *list_init()
 {
-    list *node = (list *)malloc(sizeof(struct list_));
+
+    list_t *node = (list_t *)malloc(sizeof(struct list_));
     node->head = NULL;
+    // node->tail = node->head;
     return node;
 }
 
-bool list_search(list *head, int target)
+// bool list_search(list_t *head, int target)
+// {
+//     while (head->head)
+//     {
+//         if (head->head->pointer == target)
+//         {
+//             return true;
+//         }
+//         head->head = head->head->next;
+//     }
+//     return false;
+// }
+
+void list_append(list_t *list, void *prepend_pointer, list_node_type_t list_node_type)
 {
-    while (head->head)
+    switch (list_node_type)
     {
-        if (head->head->pointer == target)
+    case BITCAST_INDEX_OFFSET_SIZE_T:
+    {
+        list_node_t *node = (list_node_t *)list_node_init(prepend_pointer, list_node_type);
+        list_node_t *curr = list->head;
+        while (curr->next)
         {
-            return true;
+            curr = curr->next;
         }
-        head->head = head->head->next;
+        curr->next = node;
+        break;
     }
-    return false;
-}
+    default:
+        break;
+    }
 
-void list_prepend(list *head, int prepend_pointer)
-{
-    list_node_t *node = list_node_init(prepend_pointer);
-    list_node_t *next = head->head->next;
-    node->next = next;
-    head->head->next = node;
+    // node->next = NULL;/*有没有无所谓，初始化中有了*/
 }
-
-#if 0
+#define MAIN
+#ifdef MAIN
 int main(void)
 {
+    data_t *data1 = data_t_init("hello11111", "world1");
+    data_t *data2 = data_t_init("hello2", "world2");
+    bitcask_index_offset_size_t *os1 = bitcask_index_offset_size_t_init(data1);
+    bitcask_index_offset_size_t *os2 = bitcask_index_offset_size_t_init(data2);
+    data_t_print(data1);
+    bitcask_index_offset_size_t_print(os1);
+    list_t *list = list_init();
+    list->head = list_node_init(os1, BITCAST_INDEX_OFFSET_SIZE_T);
+    // list->head = list_node_init(os2, BITCAST_INDEX_OFFSET_SIZE_T);
+    list_print(list, BITCAST_INDEX_OFFSET_SIZE_T);
+    list_append(list, os2, BITCAST_INDEX_OFFSET_SIZE_T);
+    list_append(list, os2, BITCAST_INDEX_OFFSET_SIZE_T);
+    list_append(list, os2, BITCAST_INDEX_OFFSET_SIZE_T);
+    list_append(list, os2, BITCAST_INDEX_OFFSET_SIZE_T);
+    list_append(list, os2, BITCAST_INDEX_OFFSET_SIZE_T);
+    list_append(list, os2, BITCAST_INDEX_OFFSET_SIZE_T);
+    list_append(list, os2, BITCAST_INDEX_OFFSET_SIZE_T);
+    list_append(list, os2, BITCAST_INDEX_OFFSET_SIZE_T);
+    list_print(list, BITCAST_INDEX_OFFSET_SIZE_T);
 
-    list *head = list_init();
-    list_node *pre = list_node_init(0);
-    head->head = pre;
-    for (int i = 1; i < 10; i++)
-    {
-        list_node *curr = list_node_init(i + 1);
-        pre->next = curr;
-        pre = curr;
-    }
-    list_print(head);
-    list_search(head, 101)
-        ? printf("find %d", 101)
-        : printf("not find %d", 101);
-    list_prepend(head, 20);
-    list_print(head);
     return 0;
 }
 #endif

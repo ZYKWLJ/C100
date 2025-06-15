@@ -1,43 +1,50 @@
 #include "../include/include.h"
 
-/**
- * data descp: 磁盘偏移和数据大小
- */
-typedef struct bitcask_index_offset_size_
+#include <stdio.h>
+typedef char *string;
+
+data_t *data_t_init(string key, string value)
 {
-    int offset; /*4b*/
-    int size;   /*4b*/
-} bitcask_index_offset_size;
+    data_t *data = (data_t *)malloc(sizeof(data_t));
+    data->key = key;
+    data->value = value;
+    data->size = strlen(value);
+    return data;
+}
 
-/**
- * data descp: 索引系统
- */
-typedef struct bitcask_index_
+void *data_t_print(data_t *data)
 {
-    string key; /*4b*/
-    bitcask_index_offset_size *offset_size;
-} bitcask_index;
+    printf("[%s[%s],%d]\n", data->key, data->value, data->size);
+}
 
-/**
- * data descp: 日志文件系统
- */
+int offset = 0;
 
-typedef struct bitcask_log_
+bitcask_index_offset_size_t *bitcask_index_offset_size_t_init(data_t *data)
 {
+    bitcask_index_offset_size_t *bitcask_index_offset_size = (bitcask_index_offset_size_t *)malloc(sizeof(struct bitcask_index_offset_size_));
+    bitcask_index_offset_size->offset = offset;
+    bitcask_index_offset_size->size = data->size;
+    return bitcask_index_offset_size;
+}
 
-} bitcask_log;
-
-/**
- * data descp: bitcask系统
- */
-typedef struct bitcask_
+bitcask_index_offset_size_t *bitcask_index_offset_size_t_print(bitcask_index_offset_size_t *bitcask_index_offset_size)
 {
-    bitcask_index *index;
-    bitcask_log *log;
-} bitcask;
+    /**
+     * data descp: 闭区间表示数据更直观
+     */
+    printf("[%d,%d]", bitcask_index_offset_size->offset, bitcask_index_offset_size->offset + bitcask_index_offset_size->size);
+}
 
+
+// #define MAIN
+#ifdef MAIN
 int main(void)
 {
-
+    data_t *data1 = data_t_init("hello", "world");
+    bitcask_index_offset_size_t *os1 = bitcask_index_offset_size_t_init( data1);
+    data_t_print(data1);
+    bitcask_index_offset_size_t_print(os1);
     return 0;
 }
+
+#endif /* BITCASK_H_ */

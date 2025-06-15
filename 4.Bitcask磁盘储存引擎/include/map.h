@@ -1,6 +1,6 @@
 #ifndef MAP_H_
 #define MAP_H_
-#include"../include.h"
+// #include"include.h"
 /**
  * data descp: 轻量级K-V搜索引擎
  */
