@@ -31,6 +31,7 @@ def count_lines_in_directory(directory):
             elif file.endswith('.h'):
                 file_path = os.path.join(root, file)
                 lines = count_lines_in_file(file_path)
+                
                 h_total_lines += lines
     return c_total_lines, h_total_lines
 
@@ -46,14 +47,14 @@ if __name__ == "__main__":
     src_c_lines, src_h_lines = count_lines_in_directory(src_dir)
     include_c_lines, include_h_lines = count_lines_in_directory(include_dir)
     
-    # # 输出结果
-    # print(f"../src目录下:")
-    # print(f"  .c 文件: {src_c_lines}")
-    # print(f"  .h 文件: {src_h_lines}")
+    # 输出结果
+    print(f"../src目录下:")
+    print(f"  .c 文件: {src_c_lines}")
+    print(f"  .h 文件: {src_h_lines}")
     
-    # print(f"../include目录下:")
-    # print(f"  .c 文件: {include_c_lines}")
-    # print(f"  .h 文件: {include_h_lines}")
+    print(f"../include目录下:")
+    print(f"  .c 文件: {include_c_lines}")
+    print(f"  .h 文件: {include_h_lines}")
     
     print(f"总计:")
     print(f"  .c 文件: {src_c_lines + include_c_lines}")

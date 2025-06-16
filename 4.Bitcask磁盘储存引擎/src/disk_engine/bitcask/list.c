@@ -1,17 +1,19 @@
-#include "../include/include.h"
+#include "../../../include/include.h"
 extern int offset;
-extern int total_data;
+extern int data_num;
 
 void list_node_print(list_node_t *list_node, list_node_type_t list_node_type)
 {
     switch (list_node_type)
     {
     case BITCAST_INDEX_OFFSET_SIZE_T:
-        bitcask_single_index_offset_size_t_print((bitcask_single_index_offset_size_t *)list_node->pointer);
+        bitcask_single_index_t_print((bitcask_single_index_t *)list_node->pointer);
+        
         break;
     default:
         break;
     }
+    printf("\n");
 }
 list_node_t *list_node_init(void *pointer, list_node_type_t list_node_type)
 {
@@ -21,7 +23,7 @@ list_node_t *list_node_init(void *pointer, list_node_type_t list_node_type)
     case BITCAST_INDEX_OFFSET_SIZE_T:
     {
         node->next = NULL;
-        node->pointer = (bitcask_single_index_offset_size_t *)pointer;
+        node->pointer = (bitcask_single_index_t *)pointer;
         // printf("init bitcask_index_offset_size_t node :\n"); /* code */
         // bitcask_index_offset_size_t_print((bitcask_index_offset_size_t *)node->pointer);
         break;
@@ -68,7 +70,7 @@ void list_print(list_t *list, list_node_type_t list_node_type)
             }
             count++;
             node = node->next;
-            total_data++;
+           data_num++;
         }
         printf("\n");
     }
@@ -85,44 +87,38 @@ list_t *list_init()
 
     list_t *node = (list_t *)malloc(sizeof(struct list_));
     node->head = NULL;
-    // node->tail = node->head;
     return node;
 }
-
-// bool list_search(list_t *head, int target)
-// {
-//     while (head->head)
-//     {
-//         if (head->head->pointer == target)
-//         {
-//             return true;
-//         }
-//         head->head = head->head->next;
-//     }
-//     return false;
-// }
-
-void list_append(list_t *list, void *prepend_pointer, list_node_type_t list_node_type)
+/**
+ * func descp: 这里追加的逻辑就会涉及相同键值直接覆盖的操作，但是磁盘里面仍然保留着。
+ */
+void list_append(list_t *list, string key, void *prepend_pointer /*vaslue*/, list_node_type_t list_node_type)
 {
     switch (list_node_type)
     {
     case BITCAST_INDEX_OFFSET_SIZE_T:
     {
-
         list_node_t *node = (list_node_t *)list_node_init(prepend_pointer, list_node_type);
-
-        // printf("list_append begin....\n");
         list_node_t *curr = list->head;
-        // printf("list=%p\n",list);
-        // printf("curr=%p\n ",curr);
+        /**
+         * data descp: 这里不仅仅要存放偏移与大小，还要存放key，便于进行比较
+         */
+        if (strcmp(((bitcask_single_index_t *)(curr->pointer))->key, key) == 0)
+        {
+            curr->pointer = (bitcask_single_index_t *)(prepend_pointer);
+            return;
+        }
         while (curr->next)
         {
-            // printf("list_append begin1....\n");
-
+            if (strcmp(((bitcask_single_index_t *)(curr->pointer))->key, key) == 0)
+            {
+                curr->pointer = (bitcask_single_index_t *)(prepend_pointer);
+                
+                return;
+            }
             curr = curr->next;
         }
         curr->next = node;
-        // printf("list_append over....\n");
         break;
     }
     default:

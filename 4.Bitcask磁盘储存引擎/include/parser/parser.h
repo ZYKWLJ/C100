@@ -19,7 +19,7 @@ void honeydb();
 void menu();
 
 void argc1();
-void argc3(char *argv[]);
-void argc4(char *argv[]);
-void parser(int argc, char *argv[]);
+void argc3(disk_engine_type_t disk_engine_type, char *argv[]);
+void argc4(disk_engine_type_t disk_engine_type, char *argv[]);
+void parser(disk_engine_type_t disk_engine_type, int argc, char *argv[]);
 #endif /* PARSER_H_ */

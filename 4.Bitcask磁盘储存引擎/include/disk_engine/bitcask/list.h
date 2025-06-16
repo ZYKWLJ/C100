@@ -1,14 +1,15 @@
 #ifndef LIST_H_
 #define LIST_H_
 
-#include "include.h"
+// #include "include.h"
 #include <stdbool.h>
 typedef char *string;
+#define MAX_DATA_SIZE 100
+
 typedef enum list_node_type_
 {
     BITCAST_INDEX_OFFSET_SIZE_T,
 } list_node_type_t;
-
 
 /**
  * data descp: 存放任何指针的链表节点
@@ -32,14 +33,14 @@ typedef struct list_
     // struct list_node_ *tail;
 } list_t;
 
- void list_print(list_t *list, list_node_type_t list_node_type);
+void list_print(list_t *list, list_node_type_t list_node_type);
 
 list_t *list_init();
 
 // bool list_search(list_t *head, int target);
 
 // void list_prepend(list_t *head, int prepend_pointer);
-void list_append(list_t *list, void *prepend_pointer, list_node_type_t list_node_type);
+void list_append(list_t *list, string key, void *prepend_pointer, list_node_type_t list_node_type);
 #if 0
 int main(void)
 {

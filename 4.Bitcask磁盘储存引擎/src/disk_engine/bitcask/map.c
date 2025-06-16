@@ -1,13 +1,9 @@
-#include "../include/include.h"
-// #include "map.h"
-// extern list_t *map[];
+#include "../../../include/include.h"
+
 /**
  * data descp: 轻量级K-V搜索引擎
  */
 
-/*固定链表数组+链表扩容(key为数字，value为指针)*/
-// #define MAX_SIZE_MAP 10000
-// void *map[MAX_SIZE_MAP] = {NULL};
 /**
  * func descp: 每个字符的码值余下容量即可作为哈希函数
  */
@@ -22,25 +18,7 @@ int hash_func(string key)
     // printf("%s hashfunc:%d\n", key, index);
     return index;
 }
-// void map_insert(list_t *map[], list_node_type_t list_node_type)
-// {
 
-// }
-// map_type_data_t *map_type_data_t_init(list_node_type_t list_node_type)
-// {
-//     map_type_data_t *map_type_data = (map_type_data_t *)malloc(sizeof(map_type_data_t));
-
-//     switch (list_node_type)
-//     {
-//     case BITCAST_INDEX_OFFSET_SIZE_T:
-//         map_type_data->map_data.bitcask_single_index = (bitcask_single_index_t *)malloc(sizeof(bitcask_single_index_t));
-//         map_type_data->map_data.bitcask_single_index->offset_size = (bitcask_single_index_offset_size_t *)malloc(sizeof(bitcask_single_index_offset_size_t));
-//         break;
-//     default:
-//         break;
-//     }
-//     return map_type_data;
-// }
 void print_map_key(list_t *map[], string key, list_node_type_t list_node_type)
 {
     switch (list_node_type)
@@ -59,7 +37,9 @@ void print_map_key(list_t *map[], string key, list_node_type_t list_node_type)
         break;
     }
 }
-void map_conflict_list_method(list_t *map[], string key, bitcask_single_index_offset_size_t *offset_size, list_node_type_t list_node_type)
+
+// #define SHOW_CONFLICT
+void map_conflict_list_method(list_t *map[], string key, bitcask_single_index_t *bitcask_single_index, list_node_type_t list_node_type)
 {
     switch (list_node_type)
     {
@@ -67,48 +47,45 @@ void map_conflict_list_method(list_t *map[], string key, bitcask_single_index_of
     {
         /* code */
         list_t *list = map[hash_func(key)];
-        // printf("conflicted key:%s\n", key);
-        list_append(list, offset_size, BITCAST_INDEX_OFFSET_SIZE_T);
-        // printf("conflicted key over:%s\n", key);
+
+#ifdef SHOW_CONFLICT
+        printf("conflicted insert...\n");
+        printf("origin value have:\n");
+        print_map_key(map, key, list_node_type);
+
+#endif
+        list_append(list, key, bitcask_single_index, BITCAST_INDEX_OFFSET_SIZE_T);
         break;
+#ifdef SHOW_CONFLICT
+
+        printf("after insert:\n");
+        print_map_key(map, key, list_node_type);
+#endif
     }
 
     default:
         break;
     }
-
-    // printf("conflicted insert...\n");
-    // printf("origin value have:\n");
-    // print_map_key(key, list_node_type);
-    // printf("after insert:\n");
-
-    // print_map_key(key, list_node_type);
 }
 
 void map_insert(list_t *map[], void *map_data, list_node_type_t list_node_type)
 {
-    // printf("end1");
     switch (list_node_type)
     {
     case BITCAST_INDEX_OFFSET_SIZE_T:
     {
         int index = hash_func(((bitcask_single_index_t *)map_data)->key);
-        // printf("end1.1");
         if (map[index])
         {
-            // printf("end1.2");
-            map_conflict_list_method(map, ((bitcask_single_index_t *)map_data)->key, ((bitcask_single_index_t *)map_data)->offset_size, list_node_type);
-            // printf("end2");
+            /*冲突后，检查key是否一致，一致则覆盖*/
+            map_conflict_list_method(map, ((bitcask_single_index_t *)map_data)->key, ((bitcask_single_index_t *)map_data), list_node_type);
             return;
         }
 #if 0
-        printf("first insert:\n");
-        printf("key:%s\n", map_data->key);
 #endif
         list_t *list = list_init();
-        list->head = list_node_init(((bitcask_single_index_t *)map_data)->offset_size, BITCAST_INDEX_OFFSET_SIZE_T);
+        list->head = list_node_init(((bitcask_single_index_t *)map_data), BITCAST_INDEX_OFFSET_SIZE_T);
         map[index] = list;
-        // printf("end3");
         break;
     }
     default:
@@ -116,6 +93,38 @@ void map_insert(list_t *map[], void *map_data, list_node_type_t list_node_type)
     }
 }
 
+void map_find(list_t *map[], string key, list_node_type_t list_node_type)
+{
+    switch (list_node_type)
+    {
+    case BITCAST_INDEX_OFFSET_SIZE_T:
+    {
+        int index = hash_func(key);
+        if (map[index])
+        {
+            list_node_t *curr = map[index]->head;
+            while (curr)
+            {
+                if (strcmp(((bitcask_single_index_t *)(curr->pointer))->key, key) == 0)
+                {
+                    printf("find key data:");
+                    list_node_print(curr, BITCAST_INDEX_OFFSET_SIZE_T);
+                    // return;
+                }
+                curr=curr->next;
+            }
+        }
+        else
+        {
+            printf("Not find key:%s\n", key);
+            // return;  
+        }
+        break;
+    }
+    default:
+        break;
+    }
+}
 // #define MAIN
 #ifdef MAIN
 int main(void)
