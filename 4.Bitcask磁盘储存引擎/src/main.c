@@ -24,22 +24,15 @@ int main(int argc, char const *argv[])
         {
             for (int i = 100; i > 0; i--)
             {
-                // printf("last: /%d s\n", i);
-                // Sleep(1000);            // 暂停2000毫秒（即2秒）
                 char result_key[100];   // 分配足够大的缓冲区
                 char result_value[100]; // 分配足够大的缓冲区
-                // 方法1: 使用sprintf
                 sprintf(result_key, "key-%d", i);
                 sprintf(result_value, "value-%d", i);
                 bitcask_log_entry_t_write_to_log(bitcask_log, data_t_init(result_key, result_value), bitcask_index);
             }
-            // bitcask_index_print(bitcask_index);
-            {
-                /*极速访问*/
-                // data_t *data = bitcask_index_get(bitcask_index, "key-50");
-                // data_t_print(data);
-                bitcask_log_read_from_begin_to_end(bitcask_log);
-            }
+            bitcask_index_print(bitcask_index);
+
+            // bitcask_log_read_from_begin_to_end(bitcask_log);
             break;
         }
     }

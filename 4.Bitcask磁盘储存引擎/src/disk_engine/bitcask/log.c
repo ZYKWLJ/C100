@@ -61,116 +61,163 @@ bitcask_log_t *bitcask_log_t_init(string log_file_path)
     return bitcask_log;
 }
 
-/**
- * func descp: 追加日志
- */
 
+/**
+ * @brief 追加日志条目到日志文件
+ * @param bitcask_log 日志对象
+ * @param data 数据（key-value）
+ * @param bitcask_index 索引对象
+ */
 void bitcask_log_entry_t_write_to_log(bitcask_log_t *bitcask_log, data_t *data, bitcask_index_t *bitcask_index)
 {
     if (bitcask_log == NULL || data == NULL || bitcask_index == NULL)
     {
+        fprintf(stderr, "Error: Invalid arguments in bitcask_log_entry_t_write_to_log\n");
         return;
     }
 
-    bitcask_log_entry_t *entry = bitcask_log_entry_t_init(data);
-    if (entry == NULL)
-    {
-        return;
-    }
-
-    // 打开文件（使用"ab"模式确保追加且为二进制）
+    // 打开文件（追加二进制模式）
     FILE *file = fopen(bitcask_log->log_file_path, "ab");
     if (file == NULL)
     {
-        free(entry);
+        perror("Failed to open log file for writing");
         return;
     }
 
     // 写入前记录当前偏移量
     long offset = ftell(file);
 
-    // 写入完整结构体（修正大小参数）
-    size_t written = fwrite(entry, sizeof(bitcask_log_entry_t), 1, file);
+    // 写入 key_size 和 value_size（使用 int）
+    int key_size = strlen(data->key);
+    int value_size = strlen(data->value);
 
-    if (written != 1)
+    if (fwrite(&key_size, sizeof(int), 1, file) != 1)
     {
-        // 写入失败处理
-        perror("Failed to write entry");
+        perror("Failed to write key_size");
+        fclose(file);
+        return;
     }
-    else
+    if (fwrite(&value_size, sizeof(int), 1, file) != 1)
     {
-        // 更新索引（使用实际写入的偏移量）
-        map_insert(bitcask_index->map,
-                   bitcask_single_index_t_init(data, offset),
-                   BITCAST_INDEX_OFFSET_SIZE_T);
-
-        // 更新日志文件偏移量（使用实际结构体大小）
-        bitcask_log->offset += sizeof(bitcask_log_entry_t);
+        perror("Failed to write value_size");
+        fclose(file);
+        return;
     }
 
-    // 关闭文件
+    // 写入 key 和 value
+    if (fwrite(data->key, 1, key_size, file) != key_size)
+    {
+        perror("Failed to write key");
+        fclose(file);
+        return;
+    }
+    if (fwrite(data->value, 1, value_size, file) != value_size)
+    {
+        perror("Failed to write value");
+        fclose(file);
+        return;
+    }
+
+    // 更新索引
+    map_insert(bitcask_index->map,
+               bitcask_single_index_t_init(data, offset),
+               BITCAST_INDEX_OFFSET_SIZE_T);
+
+    // 更新日志文件偏移量
+    bitcask_log->offset += sizeof(int) * 2 + key_size + value_size;
+    // printf("%s[%d]-%s[%d]\n",data->key,key_size,data->value,value_size);
     fclose(file);
-
-    // 释放临时分配的内存
-    free(entry);
 }
-/**
- * func descp: 按照顺序读取数据
- */
 
-/*注意这里有一个结构体对齐问题！*/
+/**
+ * @brief 从头到尾读取日志文件，并打印内容
+ * @param bitcask_log 日志对象
+ */
 void bitcask_log_read_from_begin_to_end(bitcask_log_t *bitcask_log)
 {
-    printf("begin read log entty\n");
+    if (bitcask_log == NULL)
+    {
+        fprintf(stderr, "Error: bitcask_log is NULL\n");
+        return;
+    }
 
-    /**
-     * data descp: 从log中加载
-     */
-    /*拿到4字节key和value长度*/
+    printf("=== Begin reading log entries ===\n");
 
-    FILE *file = fopen(bitcask_log->log_file_path, "r+b"); /*打开日志文件，使用"r+b"模式以二进制读/写方式打开，不会截断文件
-                                                            */
+    FILE *file = fopen(bitcask_log->log_file_path, "rb"); // 只读二进制模式
+    if (file == NULL)
+    {
+        perror("Failed to open log file for reading");
+        return;
+    }
+
     int key_size = 0;
     int value_size = 0;
     long offset = 0;
 
-    // 循环读取日志文件中的所有记录
     while (1)
     {
-        // 记录当前文件偏移量(即KV对起始位置)
         offset = ftell(file);
-        printf("offset: %ld\n", offset);
-        // 读取key大小和value大小
+        printf("\noffset: %ld\n", offset);
+
+        // 读取 key_size 和 value_size（使用 int）
         if (fread(&key_size, sizeof(int), 1, file) != 1)
         {
-            break; // 读取失败或文件结束
+            if (feof(file))
+                printf("Reached end of file.\n");
+            else
+                perror("Failed to read key_size");
+            break;
         }
-        printf("key_size: %d\n", key_size);
+        printf("key_size: %zu\n", key_size);
+
         if (fread(&value_size, sizeof(int), 1, file) != 1)
         {
-            break; // 读取失败或文件结束
+            perror("Failed to read value_size");
+            break;
         }
-        printf("value_size: %d\n", value_size);
+        printf("value_size: %zu\n", value_size);
 
-        // 读取key
-        char *key = (char *)malloc(key_size);
-        if (key == NULL || fread(key, 1, key_size, file) != key_size)
+        // 读取 key
+        char *key = (char *)malloc(key_size + 1); // +1 for '\0'
+        if (key == NULL)
         {
-            if (key)
-                free(key);
-            break; // 内存分配失败或读取失败
-        } // 读取key
-        printf("key: %s\n", key);
-        char *value = (char *)malloc(value_size);
-        if (value == NULL || fread(value, 1, value_size, file) != value_size)
-        {
-            if (value)
-                free(value);
-            break; // 内存分配失败或读取失败
+            perror("Failed to allocate memory for key");
+            break;
         }
+        if (fread(key, 1, key_size, file) != key_size)
+        {
+            perror("Failed to read key");
+            free(key);
+            break;
+        }
+        key[key_size] = '\0'; // 确保字符串以 '\0' 结尾
+        printf("key: %s\n", key);
+
+        // 读取 value
+        char *value = (char *)malloc(value_size + 1); // +1 for '\0'
+        if (value == NULL)
+        {
+            perror("Failed to allocate memory for value");
+            free(key);
+            break;
+        }
+        if (fread(value, 1, value_size, file) != value_size)
+        {
+            perror("Failed to read value");
+            free(key);
+            free(value);
+            break;
+        }
+        value[value_size] = '\0'; // 确保字符串以 '\0' 结尾
         printf("value: %s\n", value);
 
-        printf("[%d,%d,%s,%s]\n", key_size, value_size, key, value);
+        printf("[key_size=%zu, value_size=%zu, key='%s', value='%s']\n",
+               key_size, value_size, key, value);
+
+        free(key);
+        free(value);
     }
+
     fclose(file);
+    printf("=== Finished reading log entries ===\n");
 }
