@@ -46,9 +46,7 @@ data_t *data_t_init(string key, string value, Key_type key_type, Value_type valu
         break;
     case KEY_INT:
         data->key_type = KEY_INT;
-        int *key1 = (int *)malloc(sizeof(int));
-        *key1 = atoi(key);
-        data->key.int_key = *key1;
+        data->key.int_key = atoi(key) == 0 ? -1 : atoi(key);
         break;
     default:
         break;
@@ -61,32 +59,73 @@ data_t *data_t_init(string key, string value, Key_type key_type, Value_type valu
         data->value.str_value = strdup(value);
         break;
     case VALUE_INT:
-        data->value_type = VALUE_INT;
-        int *value1 = (int *)malloc(sizeof(int));
-        *value1 = atoi(value);
-        data->value.int_value = *value1;
+        data->key_type = KEY_INT;
+        data->key.int_key = atoi(key) == 0 ? -1 : atoi(key);
         break;
     default:
         break;
     }
     return data;
 }
+void data_t_free(data_t *data)
+{
+    switch (data->key_type)
+    {
+    case KEY_STRING:
+        free(data->key.str_key);
+        break;
+    default:
+        break;
+    }
+    switch (data->value_type)
+    {
+    case VALUE_STRING:
+        free(data->value.str_value);
+        break;
+    default:
+        break;
+    }
+    free(data);
+}
 
-#define TEST_KDATA
+// #define TEST_KDATA
 #ifdef TEST_KDATA
 
 int main(void)
 {
     string key1 = "Ethan";
-    string value1 = "666";
+    string value1 = "xxx";
+#if 1
+    /*这里会会发生一个很有趣的现象，编译器优化共用内存，导致malloc但是会相互影响*/
     data_t *data1 = data_t_init(key1, value1, KEY_STRING, VALUE_STRING);
     data_t *data2 = data_t_init(key1, value1, KEY_STRING, VALUE_INT);
     data_t *data3 = data_t_init(key1, value1, KEY_INT, VALUE_STRING);
     data_t *data4 = data_t_init(key1, value1, KEY_INT, VALUE_INT);
+
     data_t_print(data1);
+    free(data1);
     data_t_print(data2);
+    free(data2);
     data_t_print(data3);
+    free(data3);
     data_t_print(data4);
+    free(data4);
+
+#else
+    /*这里就不会发生共用内存，因为已经free了！*/
+    data_t *data1 = data_t_init(key1, value1, KEY_STRING, VALUE_STRING);
+    data_t_print(data1);
+    free(data1);
+    data_t *data2 = data_t_init(key1, value1, KEY_STRING, VALUE_INT);
+    data_t_print(data2);
+    free(data2);
+    data_t *data3 = data_t_init(key1, value1, KEY_INT, VALUE_STRING);
+    data_t_print(data3);
+    free(data3);
+    data_t *data4 = data_t_init(key1, value1, KEY_INT, VALUE_INT);
+    data_t_print(data4);
+    free(data4);
+#endif
     return 0;
 }
 

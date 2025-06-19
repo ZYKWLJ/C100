@@ -37,4 +37,5 @@ typedef struct data_
 
 void data_t_print(data_t *data);
 data_t *data_t_init(string key, string value, Key_type key_type, Value_type value_type);
+void data_t_free(data_t *data);
 #endif /* KDATA_H_ */
