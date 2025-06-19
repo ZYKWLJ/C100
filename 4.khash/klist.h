@@ -42,34 +42,55 @@ void list_node_free(list_node_t *node);
  */
 typedef struct list_
 {
-    list_node_t *head;
+    list_node_t *dummy_head;
 } list_t;
 
 /**
- * func descp: 打印链表并返回个数
+ * func descp: 打印链表并返回该哈希值下的数据的个数
  */
 int list_print(list_t *list);
 
 /**
  * func descp: 链表初始化
  */
-list_t *list_init( );
+list_t *list_init();
 
 /**
- * func descp: 查找链表中的数据
+ * func descp: 查找并返回链表中的数据的结构体
  */
 typedef struct search_result_
 {
     bool existed;
     data_t *data;
-} search_result_t;
-search_result_t * list_search(list_t *list, string key, Key_type key_type);
+} operate_result_t;
+/**
+ * func descp:操作结果初始化
+ */
+operate_result_t *operate_result_init();
+/**
+ * func descp: 查找链表中的数据，不打印
+ */
+operate_result_t *list_delete(list_t *list, string key, Key_type key_type);
+
+/**
+ * func descp: 查找链表中的数据，并打印结果
+ */
+void list_search_show_info(list_t *list, string key_target, Key_type key_type);
 
 /**
  * func descp: 追加链表节点
  */
 void list_append(list_t *list, list_node_t *list_node);
 
-void list_search_show_info(list_t *list, string key_target, Key_type key_type);
+/**
+ * func descp: 删除链表节点
+ */
+
+void list_delete(list_t *list, string key_target, Key_type key_type);
+
+/**
+ * func descp: 更新链表节点数据
+ */
+void list_update(list_t *list, string key_target, string new_value, Key_type key_type);
 
 #endif /* LIST_H_ */

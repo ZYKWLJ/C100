@@ -84,7 +84,7 @@ void map_insert(list_t *map[], void *map_data, list_node_type_t list_node_type)
 #if 0
 #endif
         list_t *list = list_init();
-        list->head = list_node_init(((bitcask_single_index_t *)map_data), BITCAST_INDEX_OFFSET_SIZE_T);
+        list->dummy_head = list_node_init(((bitcask_single_index_t *)map_data), BITCAST_INDEX_OFFSET_SIZE_T);
         map[index] = list;
         break;
     }
@@ -102,7 +102,7 @@ void map_find(list_t *map[], string key, list_node_type_t list_node_type)
         int index = hash_func(key);
         if (map[index])
         {
-            list_node_t *curr = map[index]->head;
+            list_node_t *curr = map[index]->dummy_head;
             while (curr)
             {
                 if (strcmp(((bitcask_single_index_t *)(curr->pointer))->key, key) == 0)

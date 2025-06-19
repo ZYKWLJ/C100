@@ -44,13 +44,13 @@ void list_node_free(list_node_t *node)
 
 void list_print(list_t *list, list_node_type_t list_node_type)
 {
-    if (list->head == NULL)
+    if (list->dummy_head == NULL)
     {
         // printf("list is empty\n");
         return;
     }
     int count = 0;
-    list_node_t *node = list->head;
+    list_node_t *node = list->dummy_head;
     switch (list_node_type)
     {
     case BITCAST_INDEX_OFFSET_SIZE_T:
@@ -86,7 +86,7 @@ list_t *list_init()
 {
 
     list_t *node = (list_t *)malloc(sizeof(struct list_));
-    node->head = NULL;
+    node->dummy_head = NULL;
     return node;
 }
 /**
@@ -99,7 +99,7 @@ void list_append(list_t *list, string key, void *prepend_pointer /*vaslue*/, lis
     case BITCAST_INDEX_OFFSET_SIZE_T:
     {
         list_node_t *node = (list_node_t *)list_node_init(prepend_pointer, list_node_type);
-        list_node_t *curr = list->head;
+        list_node_t *curr = list->dummy_head;
         /**
          * data descp: 这里不仅仅要存放偏移与大小，还要存放key，便于进行比较
          */

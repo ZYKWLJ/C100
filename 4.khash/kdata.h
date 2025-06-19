@@ -9,7 +9,8 @@ typedef enum
 typedef enum
 {
     VALUE_STRING,
-    VALUE_INT
+    VALUE_INT,
+    VALUE_NONE
 } Value_type;
 
 /**

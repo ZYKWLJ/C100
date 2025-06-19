@@ -29,7 +29,7 @@ void list_node_free(list_node_t *node);
  */
 typedef struct list_
 {
-    list_node_t *head;
+    list_node_t *dummy_head;
     // struct list_node_ *tail;
 } list_t;
 

@@ -28,6 +28,8 @@ void data_t_print(data_t *data)
         printf("value type : int\n");
         printf("%d\n", data->value.int_value);
         break;
+    case VALUE_NONE:
+        break;
     default:
         break;
     }
@@ -58,14 +60,19 @@ data_t *data_t_init(string key, string value, Key_type key_type, Value_type valu
         data->value.str_value = strdup(value);
         break;
     case VALUE_INT:
-        data->key_type = KEY_INT;
-        data->key.int_key = atoi(key) == 0 ? -1 : atoi(key);
+        data->value_type = VALUE_INT;
+        data->value.int_value = atoi(key) == 0 ? -1 : atoi(key);
+        break;
+    case VALUE_NONE:
+        data->value_type = VALUE_NONE;
+        data->value.int_value = atoi(key) == 0 ? -1 : atoi(key);
         break;
     default:
         break;
     }
     return data;
 }
+
 void data_t_free(data_t *data)
 {
     switch (data->key_type)
@@ -127,5 +134,4 @@ int main(void)
 #endif
     return 0;
 }
-
 #endif
