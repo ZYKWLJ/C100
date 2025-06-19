@@ -39,4 +39,6 @@ typedef struct data_
 void data_t_print(data_t *data);
 data_t *data_t_init(string key, string value, Key_type key_type, Value_type value_type);
 void data_t_free(data_t *data);
+void data_t_print_key(string key, Key_type key_type);
+void data_t_print_value(string value, Value_type value_type);
 #endif /* KDATA_H_ */

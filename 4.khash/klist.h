@@ -61,7 +61,8 @@ list_t *list_init();
 typedef struct search_result_
 {
     bool existed;
-    data_t *data;
+    list_node_t *list_node;
+    // data_t *data;
 } operate_result_t;
 /**
  * func descp:操作结果初始化
