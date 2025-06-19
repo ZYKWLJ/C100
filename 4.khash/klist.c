@@ -7,8 +7,9 @@
  */
 void list_node_print(list_node_t *list_node)
 {
-    printf("next=%p\n", list_node->next);
+   
     data_t_print(list_node->data);
+     printf(",next=%p\n", list_node->next);
 }
 
 /**
@@ -208,24 +209,22 @@ void list_node_update(list_node_t *list_node, string key_target, string new_valu
 
 void list_append(list_t *list, string key_target, string new_value, Key_type key_type, Value_type value_type)
 {
-    printf(" append start!\n");
+    // printf(" append start!\n");
 
     operate_result_t *search_result = list_search(list, key_target, key_type);
-    printf(" 1\n");
+    // printf(" 1\n");
 
     /**
      * func descp: 存在数据，那么就是跟新，不是追加
      */
     if (search_result->existed)
     {
-        printf("existed, now update.\n");
-
         data_t_print_key(key_target, key_type);
         printf("existed, now update.\n");
         list_node_update(search_result->list_node, key_target, new_value, key_type, value_type);
         return;
     }
-    printf(" 2\n");
+    // printf(" 2\n");
 
     /**
      * func descp: 不存在数据，就是追加
@@ -236,7 +235,7 @@ void list_append(list_t *list, string key_target, string new_value, Key_type key
     list->dummy_head->next = list_node;
     list_node->next = curr;
     data_t_print(list_node->data);
-    printf(" append over!\n");
+    printf(",append succeed!\n");
 }
 
 /**
@@ -346,7 +345,7 @@ int main(void)
 
 #endif
 
-#define TEST_DELETE
+// #define TEST_DELETE
 #ifdef TEST_DELETE
 
     list_append(list, "hello", "world", KEY_STRING, VALUE_STRING);
@@ -357,6 +356,20 @@ int main(void)
     list_print(list);
     list_delete(list, "hello", KEY_STRING);
     list_print(list);
+
+#endif
+
+
+#define TEST_DELETE_DIFFENT_KIND
+#ifdef TEST_DELETE_DIFFENT_KIND
+
+    list_append(list, "1", "world1", KEY_STRING, VALUE_STRING);
+    list_append(list, "1", "world1", KEY_INT, VALUE_STRING);
+    list_print(list);
+
+    list_append(list, "1", "world122", KEY_INT, VALUE_STRING);
+    list_print(list);
+
 #endif
     return 0;
 }

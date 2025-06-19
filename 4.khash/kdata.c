@@ -50,7 +50,7 @@ void data_t_print_key_value(string k_or_v, string key, Key_type key_type)
         printf("[string]%s", key);
         break;
     case KEY_INT:
-        printf("[int]%d\n", atoi(key));
+        printf("[int]%d", atoi(key));
         break;
     default:
         break;
@@ -58,7 +58,7 @@ void data_t_print_key_value(string k_or_v, string key, Key_type key_type)
 }
 void data_t_print_key(string key, Key_type key_type)
 {
-    data_t_print_key_value("[key", key, key_type);
+    data_t_print_key_value("key", key, key_type);
 }
 
 void data_t_print_value(string value, Value_type value_type)
@@ -67,11 +67,15 @@ void data_t_print_value(string value, Value_type value_type)
 }
 void data_t_print(data_t *data)
 {
+    printf("[");
     switch (data->key_type)
     {
     case KEY_STRING:
+    {
+
         data_t_print_key(data->key.str_key, data->key_type);
-        break;
+    }
+    break;
     case KEY_INT:
     {
         char key[100];
@@ -101,7 +105,7 @@ void data_t_print(data_t *data)
         break;
     }
     printf("]");
-    printf("\n");
+    // printf("\n");
 }
 
 void data_t_free(data_t *data)
