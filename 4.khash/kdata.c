@@ -12,7 +12,6 @@ void data_t_print(data_t *data)
         break;
     case KEY_INT:
         printf("key type : int\n");
-
         printf("%d\n", data->key.int_key);
         break;
     default:

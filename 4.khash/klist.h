@@ -46,9 +46,9 @@ typedef struct list_
 } list_t;
 
 /**
- * func descp: 打印链表
+ * func descp: 打印链表并返回个数
  */
-void list_print(list_t *list);
+int list_print(list_t *list);
 
 /**
  * func descp: 链表初始化

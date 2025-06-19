@@ -44,14 +44,17 @@ list_t *list_init()
 /**
  * func descp: 打印链表
  */
-void list_print(list_t *list)
+int list_print(list_t *list)
 {
+    int count = 0;
     list_node_t *curr = list->head;
     while (curr)
     {
         list_node_print(curr);
         curr = curr->next;
+        count++;
     }
+    return count;
 }
 
 /**
@@ -148,6 +151,9 @@ int main(void)
 {
 
     list_t *list = list_init();
+// #define TEST_APPEND
+#ifdef TEST_APPEND
+
     list_search(list, "1", KEY_INT) ? printf("find data 1\n") : printf("not find data 1\n");
     list_append(list, list_node_init(data_t_init("1", "3", KEY_INT, VALUE_STRING)));
     list_append(list, list_node_init(data_t_init("2", "3", KEY_INT, VALUE_STRING)));
@@ -155,6 +161,20 @@ int main(void)
     list_print(list);
     list_search_show_info(list, "1", KEY_STRING);
     list_search_show_info(list, "2", KEY_INT);
+#endif
+#define TEST_APPEND_10000
+#ifdef TEST_APPEND_10000
+    for (int i = 9950; i < 10000; i++)
+    {
+        char key[20];
+        char value[20];
+        sprintf(key, "%d", i);
+        sprintf(value, "value_%d", i);
+        list_append(list, list_node_init(data_t_init(key, value, KEY_INT, VALUE_STRING)));
+    }
+    list_print(list);
+
+#endif
     return 0;
 }
 
