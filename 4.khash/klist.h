@@ -69,9 +69,13 @@ typedef struct search_result_
  */
 operate_result_t *operate_result_init();
 /**
+ * func descp: 更新链表节点数据
+ */
+void list_node_update(list_node_t *list_node, string key_target, string new_value, Key_type key_type, Value_type value_type);
+/**
  * func descp: 查找链表中的数据，不打印
  */
-operate_result_t *list_delete(list_t *list, string key, Key_type key_type);
+operate_result_t *list_search(list_t *list, string key_target, Key_type key_type);
 
 /**
  * func descp: 查找链表中的数据，并打印结果
@@ -81,17 +85,17 @@ void list_search_show_info(list_t *list, string key_target, Key_type key_type);
 /**
  * func descp: 追加链表节点
  */
-void list_append(list_t *list, list_node_t *list_node);
+void list_append(list_t *list, string key_target, string new_value, Key_type key_type, Value_type value_type);
 
 /**
  * func descp: 删除链表节点
  */
 
-void list_delete(list_t *list, string key_target, Key_type key_type);
-
+operate_result_t *list_delete(list_t *list, string key_target, Key_type key_type);
 /**
- * func descp: 更新链表节点数据
+ * func descp: 删除链表节点并打印信息
  */
-void list_update(list_t *list, string key_target, string new_value, Key_type key_type);
+
+void list_delete_show_info(list_t *list, string key_target, Key_type key_type);
 
 #endif /* LIST_H_ */
