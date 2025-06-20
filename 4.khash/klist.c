@@ -7,9 +7,11 @@
  */
 void list_node_print(list_node_t *list_node)
 {
-   
+
     data_t_print(list_node->data);
-     printf(",next=%p\n", list_node->next);
+    printf(",next=%p\n", list_node->next);
+    // printf("============================================\n\n");
+    printf("--------------------------------------------");
 }
 
 /**
@@ -83,6 +85,7 @@ int list_print(list_t *list)
     while (curr)
     {
         list_node_print(curr);
+        printf("list_index:%d\n", count);
         curr = curr->next;
         count++;
     }
@@ -120,8 +123,8 @@ operate_result_t *list_search(list_t *list, string key_target, Key_type key_type
         {
             if (list_node_equal(curr, key_target, key_type))
             {
-                // printf("find data:\n");
-                // data_t_print(curr->data);
+                printf("find data:\n");
+                data_t_print(curr->data);
                 search_result->list_node = curr;
                 search_result->existed = true;
                 return search_result;
@@ -151,6 +154,7 @@ operate_result_t *list_search(list_t *list, string key_target, Key_type key_type
     default:
         break;
     }
+    printf("3");
     return search_result;
 }
 
@@ -162,17 +166,20 @@ void list_search_show_info(list_t *list, string key_target, Key_type key_type)
     operate_result_t *search_result = list_search(list, key_target, key_type);
     if (search_result->existed)
     {
-        printf("find data of key %s\n", key_target);
+        printf("find data of ");
+        data_t_print_key(key_target, key_type);
+        printf("\n");
         data_t_print(search_result->list_node->data);
     }
     else
     {
-        printf("not find data of key %s\n\n", key_target);
+        data_t_no_data_key(key_target, key_type);
+        printf("\n");
     }
 }
 
 /**
- * func descp: 更新函数，节点的值跟新（值的数据类型可以变化）,这里值也要做参数，因为类型变了也是变了@！
+ * func descp: 节点更新函数，节点的值跟新（值的数据类型可以变化）,这里值也要做参数，因为类型变了也是变了@！
  */
 void list_node_update(list_node_t *list_node, string key_target, string new_value, Key_type key_type, Value_type value_type)
 {
@@ -206,11 +213,10 @@ void list_node_update(list_node_t *list_node, string key_target, string new_valu
 /**
  * func descp: 追加链表节点(不区分value类型，只区分key类型)
  */
-
+/*这里追加操作和更新操作共用了，因为key、keytype一旦相同就直接覆盖了！@*/
 void list_append(list_t *list, string key_target, string new_value, Key_type key_type, Value_type value_type)
 {
     // printf(" append start!\n");
-
     operate_result_t *search_result = list_search(list, key_target, key_type);
     // printf(" 1\n");
 
@@ -220,7 +226,7 @@ void list_append(list_t *list, string key_target, string new_value, Key_type key
     if (search_result->existed)
     {
         data_t_print_key(key_target, key_type);
-        printf("existed, now update.\n");
+        printf(", existed, now update.\n");
         list_node_update(search_result->list_node, key_target, new_value, key_type, value_type);
         return;
     }
@@ -229,7 +235,8 @@ void list_append(list_t *list, string key_target, string new_value, Key_type key
     /**
      * func descp: 不存在数据，就是追加
      */
-    // printf("No data which key is %s\n", key_target);
+    // printf("No data which key is ");
+    // data_t_print_key(key_target, key_type);
     list_node_t *curr = list->dummy_head->next;
     list_node_t *list_node = list_node_init(data_t_init(key_target, new_value, key_type, value_type));
     list->dummy_head->next = list_node;
@@ -245,15 +252,16 @@ void list_append(list_t *list, string key_target, string new_value, Key_type key
 operate_result_t *list_delete(list_t *list, string key_target, Key_type key_type)
 {
     operate_result_t *search_result = list_search(list, key_target, key_type);
+    // printf("list ndoe delete\n");
     if (search_result->existed == false)
     {
-        printf("Data of the key is %s is not existed.\n", key_target);
+        printf("No data which key is ");
+        data_t_print_key(key_target, key_type);
     }
     list_node_t *curr = list->dummy_head->next;
     list_node_t *pre = list->dummy_head;
     switch (key_type)
     {
-
     case KEY_STRING:
     {
         while (curr)
@@ -263,7 +271,8 @@ operate_result_t *list_delete(list_t *list, string key_target, Key_type key_type
                 pre->next = curr->next;
                 search_result->existed = true;
                 search_result->list_node = curr;
-                list_node_free(curr);
+                // list_node_free(curr);/*暂时不能回收，因为后面还要使用！*/
+                // printf("list ndoe delete ok\n");
                 return search_result;
             }
             pre = curr;
@@ -282,7 +291,7 @@ operate_result_t *list_delete(list_t *list, string key_target, Key_type key_type
                 pre->next = curr->next;
                 search_result->existed = true;
                 search_result->list_node = curr;
-                list_node_free(curr);
+                // list_node_free(curr);
                 return search_result;
             }
             pre = curr;
@@ -294,7 +303,8 @@ operate_result_t *list_delete(list_t *list, string key_target, Key_type key_type
     default:
         break;
     }
-    printf("No data which key is %s\n", key_target);
+    printf("No data which key is ");
+    data_t_print_key(key_target, key_type);
 }
 
 /**
@@ -314,7 +324,7 @@ void list_delete_show_info(list_t *list, string key_target, Key_type key_type)
     }
 }
 
-#define TEST_LIST
+// #define TEST_LIST
 #ifdef TEST_LIST
 int main(void)
 {
@@ -359,7 +369,6 @@ int main(void)
 
 #endif
 
-
 #define TEST_DELETE_DIFFENT_KIND
 #ifdef TEST_DELETE_DIFFENT_KIND
 
@@ -368,6 +377,7 @@ int main(void)
     list_print(list);
 
     list_append(list, "1", "world122", KEY_INT, VALUE_STRING);
+
     list_print(list);
 
 #endif

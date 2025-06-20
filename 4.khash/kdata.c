@@ -61,6 +61,12 @@ void data_t_print_key(string key, Key_type key_type)
     data_t_print_key_value("key", key, key_type);
 }
 
+void data_t_no_data_key(string key, Key_type key_type)
+{
+    printf("No data which key is ");
+    data_t_print_key(key, key_type);
+}
+
 void data_t_print_value(string value, Value_type value_type)
 {
     data_t_print_key_value(",value", value, value_type);

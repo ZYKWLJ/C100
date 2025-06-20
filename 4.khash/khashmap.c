@@ -31,43 +31,33 @@ int hash_func(string key)
 void print_map_key(list_t *map[], string key, Key_type key_type)
 {
     int index = hash_func(key);
-
     list_t *list = map[index];
-    if (key_type != list->dummy_head->data->key_type)
-    {
-        return;
-    }
     list_print(list);
 }
 
 // #define SHOW_CONFLICT
-void map_conflict_list_method(list_t *map[], string key, Key_type key_type, list_node_t *list_node)
+void map_conflict_list_method(list_t *map[], string same_hash_key, string conflict_value, Key_type key_type, Value_type value_type)
 {
-    int index = hash_func(key);
+    int index = hash_func(same_hash_key);
     list_t *list = map[index];
-    if (key_type != list->dummy_head->data->key_type)
-    {
-        return;
-    }
-    list_append(list, list_node);
+    list_append(list, same_hash_key, conflict_value, key_type, value_type);
 }
 
-void map_insert(list_t *map[], string key, Key_type key_type, list_node_t *list_node)
+void map_insert(list_t *map[], string key, string value, Key_type key_type, Value_type value_type)
 {
     int index = hash_func(key);
     list_t *list = map[index];
 
-    if (list->dummy_head == NULL)
+    if (list->dummy_head->next == NULL)
     {
-        list->dummy_head = list_node;
+        list->dummy_head->next = list_node_init(data_t_init(key, value, key_type, value_type));
+        data_t_print(list->dummy_head->next->data);
+        printf(",append succeed!\n");
+        return;
     }
     else
     {
-        if (key_type != list->dummy_head->data->key_type)
-        {
-            return;
-        }
-        map_conflict_list_method(map, key, key_type, list_node);
+        map_conflict_list_method(map, key, value, key_type, value_type);
     }
     // printf("insert over!\n");
 }
@@ -76,39 +66,67 @@ void map_find(list_t *map[], string key, Key_type key_type)
 {
     int index = hash_func(key);
     list_t *list = map[index];
-    if (key_type != list->dummy_head->data->key_type)
+    operate_result_t *operate_result = list_search(list, key, key_type);
+    if (operate_result->existed == false)
     {
+        printf("find failed, ");
+        data_t_no_data_key(key, key_type);
+        printf("\n");
         return;
     }
-    list_delete(list, key, key_type);
+    printf("find data:");
+    data_t_print(operate_result->list_node->data);
+    printf(" succeed!\n");
 }
 
 void map_find_show_info(list_t *map[], string key, Key_type key_type)
 {
     int index = hash_func(key);
     list_t *list = map[index];
-    if (key_type != list->dummy_head->data->key_type)
-    {
-        return;
-    }
     list_search_show_info(list, key, key_type);
+}
+
+void map_delete(list_t *map[], string key, Key_type key_type)
+{
+    // printf("map delete\n");
+    int index = hash_func(key);
+
+    list_t *list = map[index];
+    printf("index=%d\n", index);
+    operate_result_t *operate_result = list_delete(list, key, key_type);
+    // printf("map delete step 2\n");
+
+    if (operate_result->existed == false)
+    {
+        printf("map delete failed!");
+        data_t_no_data_key(key, key_type);
+        printf("\n");
+    }
+    printf("map delete ");
+    data_t_print(operate_result->list_node->data);
+    printf(" succeed!\n");
 }
 
 void map_print(list_t *map[])
 {
+    int count = 0;
+    printf("\n\n============================================\n");
     printf("start to print all data in map\n");
     for (int i = 0; i < HASH_COUNT; i++)
     {
-        if (map[i]->dummy_head == NULL)
+        if (map[i]->dummy_head->next == NULL)
         {
             continue;
         }
-        printf("hashIndex:%d\n", i);
-        int count = list_print(map[i]);
-        printf("\nTotal count:%d\n", count);
-        printf("============================================\n\n");
+        printf("--------------------------------------------");
+
+        printf("khashIndex:%d\n", i);
+        count += list_print(map[i]);
     }
+    printf("\nTotal khashmap count:%d\n", count);
+    printf("============================================\n\n");
 }
+
 #define TEST_MAP
 #ifdef TEST_MAP
 int main(void)
@@ -131,21 +149,47 @@ int main(void)
         char value[10];
         sprintf(key, "key_%d", i);
         sprintf(value, "value_%d", i);
-        map_insert(map, key, KEY_STRING, list_node_init(data_t_init(key, value, KEY_STRING, VALUE_STRING)));
+        map_insert(map, key, value, KEY_STRING, VALUE_STRING);
     }
     map_print(map);
 
 #endif
 
-#define TEST_HASH_TABLE_10
+#define TEST_MAP_DELETE
+#ifdef TEST_MAP_DELETE
+    for (int i = 0; i < 110; i++)
+    {
+        char key[10];
+        char value[10];
+        char value1[10];
+        sprintf(key, "key_%d", i);
+        sprintf(value, "value_%d", i);
+        sprintf(value1, "value_%d", i + 1);
+
+        map_insert(map, key, value, KEY_STRING, VALUE_STRING);
+        // map_print(map);
+        // map_insert(map, key, value1, KEY_STRING, VALUE_STRING);
+        // map_print(map);
+
+        // map_find(map, key, KEY_STRING);
+        // map_delete(map, key, KEY_STRING);
+
+        // map_print(map);
+        // map_find(map, key, KEY_STRING);
+    }
+    map_print(map);
+#endif
+
+// #define TEST_HASH_TABLE_10
 #ifdef TEST_HASH_TABLE_10
+    printf("TEST_HASH_TABLE_10\n\n");
     for (int i = 0; i < 10; i++)
     {
         char key[10];
         char value[10];
-        sprintf(key, "key_%d", i);
+        sprintf(key, "key_%d", 0);
         sprintf(value, "value_%d", i);
-        map_insert(map, key, KEY_STRING, list_node_init(data_t_init(key, value, KEY_STRING, VALUE_NONE)));
+        map_insert(map, key, value, KEY_STRING, VALUE_STRING);
     }
     map_print(map);
 
