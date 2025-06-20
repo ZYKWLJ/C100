@@ -10,7 +10,6 @@ void list_node_print(list_node_t *list_node)
 
     data_t_print(list_node->data);
     printf(",next=%p\n", list_node->next);
-    // printf("============================================\n\n");
     printf("--------------------------------------------");
 }
 
@@ -71,7 +70,6 @@ list_t *list_init()
 {
     list_t *list = (list_t *)malloc(sizeof(struct list_));
     list->dummy_head = list_node_init(NULL);
-    // list->dummy_head->data = NULL;
     return list;
 }
 
@@ -108,12 +106,10 @@ operate_result_t *operate_result_init()
 operate_result_t *list_search(list_t *list, string key_target, Key_type key_type)
 {
     operate_result_t *search_result = operate_result_init();
-    // printf("1");
     if (list->dummy_head->next == NULL)
     {
         return search_result;
     }
-    // printf("2");
     list_node_t *curr = list->dummy_head->next;
     switch (key_type)
     {
@@ -154,7 +150,6 @@ operate_result_t *list_search(list_t *list, string key_target, Key_type key_type
     default:
         break;
     }
-    printf("3");
     return search_result;
 }
 
@@ -216,10 +211,7 @@ void list_node_update(list_node_t *list_node, string key_target, string new_valu
 /*这里追加操作和更新操作共用了，因为key、keytype一旦相同就直接覆盖了！@*/
 void list_append(list_t *list, string key_target, string new_value, Key_type key_type, Value_type value_type)
 {
-    // printf(" append start!\n");
     operate_result_t *search_result = list_search(list, key_target, key_type);
-    // printf(" 1\n");
-
     /**
      * func descp: 存在数据，那么就是跟新，不是追加
      */
@@ -230,13 +222,9 @@ void list_append(list_t *list, string key_target, string new_value, Key_type key
         list_node_update(search_result->list_node, key_target, new_value, key_type, value_type);
         return;
     }
-    // printf(" 2\n");
-
     /**
      * func descp: 不存在数据，就是追加
      */
-    // printf("No data which key is ");
-    // data_t_print_key(key_target, key_type);
     list_node_t *curr = list->dummy_head->next;
     list_node_t *list_node = list_node_init(data_t_init(key_target, new_value, key_type, value_type));
     list->dummy_head->next = list_node;

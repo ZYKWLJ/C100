@@ -4,10 +4,6 @@
 list_t *map[HASH_COUNT];
 // 可不可以用随机值作为哈希函数？不可以！
 
-/**
- * func descp: 每个字符的码值余下容量即可作为哈希函数
- */
-
 void map_init(list_t *map[])
 {
     for (int i = 0; i < HASH_COUNT; i++)
@@ -16,6 +12,9 @@ void map_init(list_t *map[])
     }
     // printf("init over!\n");
 }
+/**
+ * func descp: 每个字符的码值余下容量即可作为哈希函数
+ */
 int hash_func(string key)
 {
     int index = 0;
@@ -157,7 +156,7 @@ int main(void)
 
 #define TEST_MAP_DELETE
 #ifdef TEST_MAP_DELETE
-    for (int i = 0; i < 110; i++)
+    for (int i = 0; i < 1; i++)
     {
         char key[10];
         char value[10];
@@ -165,17 +164,22 @@ int main(void)
         sprintf(key, "key_%d", i);
         sprintf(value, "value_%d", i);
         sprintf(value1, "value_%d", i + 1);
-
+        /*插入数据*/
         map_insert(map, key, value, KEY_STRING, VALUE_STRING);
-        // map_print(map);
-        // map_insert(map, key, value1, KEY_STRING, VALUE_STRING);
-        // map_print(map);
-
-        // map_find(map, key, KEY_STRING);
-        // map_delete(map, key, KEY_STRING);
-
-        // map_print(map);
-        // map_find(map, key, KEY_STRING);
+        /*全表打印*/
+        map_print(map);
+        /*插入数据，本质为更新*/
+        map_insert(map, key, value1, KEY_STRING, VALUE_STRING);
+        /*全表打印*/
+        map_print(map);
+        /*全表查找*/
+        map_find(map, key, KEY_STRING);
+        /*删除*/
+        map_delete(map, key, KEY_STRING);
+        /*全表打印*/
+        map_print(map);
+        /*再次查找*/
+        map_find(map, key, KEY_STRING);
     }
     map_print(map);
 #endif

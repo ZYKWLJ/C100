@@ -142,7 +142,7 @@ int main(void)
 {
     string key1 = "Ethan";
     string value1 = "xxx";
-#define BASIC1
+// #define BASIC1
 #ifdef BASIC1
     /*这里会会发生一个很有趣的现象，编译器优化共用内存，导致malloc但是会相互影响*/
     data_t *data1 = data_t_init(key1, value1, KEY_STRING, VALUE_STRING);
@@ -151,28 +151,38 @@ int main(void)
     data_t *data4 = data_t_init(key1, value1, KEY_INT, VALUE_INT);
 
     data_t_print(data1);
+    printf("\n");
     free(data1);
     data_t_print(data2);
+    printf("\n");
+
     free(data2);
     data_t_print(data3);
+    printf("\n");
     free(data3);
     data_t_print(data4);
+    printf("\n");
     free(data4);
 #endif
+#define BASIC2
 #ifdef BASIC2
 
     /*这里就不会发生共用内存，因为已经free了！*/
     data_t *data1 = data_t_init(key1, value1, KEY_STRING, VALUE_STRING);
     data_t_print(data1);
+    printf("\n");
     free(data1);
     data_t *data2 = data_t_init(key1, value1, KEY_STRING, VALUE_INT);
     data_t_print(data2);
+    printf("\n");
     free(data2);
     data_t *data3 = data_t_init(key1, value1, KEY_INT, VALUE_STRING);
     data_t_print(data3);
+    printf("\n");
     free(data3);
     data_t *data4 = data_t_init(key1, value1, KEY_INT, VALUE_INT);
     data_t_print(data4);
+    printf("\n");
     free(data4);
 #endif
 
