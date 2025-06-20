@@ -27,17 +27,6 @@
     {             \
     } while (0);
 #endif
-void show_time(char *str)
-{
-    time_t current_time;
-    struct tm *local_time;
-    time(&current_time);                   // 获取当前时间
-    local_time = localtime(&current_time); // 转换为本地时间
-    // 使用strftime格式化输出时间
-    char time_str[100];
-    strftime(time_str, sizeof(time_str), "[log]%Y-%m-%d %H:%M:%S", local_time);
-    printf("[%s]%s\n", time_str, str);
-}
 int main(void)
 {
     LOG("hello world")
