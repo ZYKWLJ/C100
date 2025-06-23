@@ -1,29 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 typedef struct queue_
 {
     int arr[100];
-    int in;
-    int out;
+    int L;
+    int R;
 } queue_t;
 
-queue_t *queue_init()
-{
-    queue_t *queue = (queue_t *)malloc(sizeof(struct queue_));
-    /**
-     * data descp: 起点都在最中间的100，然后往两边扩张.左右指针刚好交替的。
-     */
-    queue->out = 99;
-    queue->in = 99;
-    for (int i = 0; i < 100; i++)
-    {
-        queue->arr[i] = INT_MIN;
-    }
-    return queue;
+// 初始化队列
+queue_t* queue_init(){
+    queue_t* q = (queue_t*)malloc(sizeof(queue_t));
+    q->L = 0;     // 队首索引初始化为0
+    q->R = 0;     // 队尾索引初始化为0
+    return q;
 }
 void queue_basic_border_err(queue_t *queue)
 {
-    if (queue->in < 0 || queue->out >= 200)
+    if (queue->L < 0 || queue->L >= 100||queue->R < 0 || queue->R >= 100)
     {
         fprintf(stderr, "queue border error\n");
         return;
@@ -32,7 +26,7 @@ void queue_basic_border_err(queue_t *queue)
 int queue_size(queue_t *queue)
 {
     queue_basic_border_err(queue);
-    return queue->out - queue->in + 1;
+    return queue->R- queue->L;
 }
 
 void queue_overflow_err(queue_t *queue)
@@ -53,27 +47,30 @@ void queue_underflow_err(queue_t *queue)
         return;
     }
 }
-void queue_push(queue_t *queue, int val)
-{
-    queue_overflow_err(queue);
-    queue->arr[queue->in--] = val;
+// 判断队列是否为空
+bool queue_empty(queue_t* q){
+    return q->L == q->L;
 }
 
-int queue_pop(queue_t *queue)
-{
-    queue_underflow_err(queue);
-    return queue->arr[--queue->out];
+// 入队列（从队尾添加）
+void queue_push(queue_t* q, int node){
+    q->arr[q->R++] = node;
 }
-int queue_peek(queue_t *queue)
-{
-    queue_underflow_err(queue);
-    return queue->arr[queue->out - 1];
+
+// 出队列（从队首取出）
+int queue_pop(queue_t* q){
+    return q->arr[q->L++];
+}
+
+// 获取队列首元素
+int queue_front(queue_t* q){
+    return q->arr[q->L];
 }
 void queue_print(queue_t *queue)
 {
     queue_underflow_err(queue);
     queue_overflow_err(queue);
-    for (int i = queue->in + 1; i <= queue->out; i++)
+    for (int i = queue->L ; i < queue->R; i++)
     {
         printf("%d ", queue->arr[i]);
     }
