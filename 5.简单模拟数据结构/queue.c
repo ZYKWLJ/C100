@@ -14,7 +14,7 @@ queue_t *queue_init()
      * data descp: 起点都在最中间的100，然后往两边扩张.左右指针刚好交替的。
      */
     queue->out = 99;
-    queue->in = 100;
+    queue->in = 99;
     for (int i = 0; i < 100; i++)
     {
         queue->arr[i] = INT_MIN;
@@ -56,7 +56,7 @@ void queue_underflow_err(queue_t *queue)
 void queue_push(queue_t *queue, int val)
 {
     queue_overflow_err(queue);
-    queue->arr[--queue->in] = val;
+    queue->arr[queue->in--] = val;
 }
 
 int queue_pop(queue_t *queue)
@@ -73,7 +73,7 @@ void queue_print(queue_t *queue)
 {
     queue_underflow_err(queue);
     queue_overflow_err(queue);
-    for (int i = queue->in; i <= queue->out; i++)
+    for (int i = queue->in + 1; i <= queue->out; i++)
     {
         printf("%d ", queue->arr[i]);
     }
@@ -82,7 +82,10 @@ void queue_print(queue_t *queue)
 
 int main(void)
 {
+
     queue_t *st = queue_init();
+    queue_print(st);
+
     for (int i = 0; i < 50; i++)
     {
         queue_push(st, i);
