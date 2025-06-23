@@ -29,7 +29,7 @@
 #endif
 int main(void)
 {
-    LOG("hello world")
+    LOG("hello world %d",8)
     TODO("Func1")
     return 0;
 }
