@@ -3,31 +3,40 @@
 
 #define READ_TIME 3
 int count = 0;
-/*i -> border width*/
-void help_border(const char *str, int i)
+/*border column 1 & 5*/
+void border_1_5(const char *str, int i)
 {
     int j = i;
     while (j-- > 0)
-        printf("%s", j == i-1 || j == 0 ? "#" : " ");
+        printf("%s", j ? "#" : "#\n");
+}
+/*border column 2 & 4*/
+void border_2_4(const char *str, int i)
+{
+    int j = i;
+    while (j-- > 0)
+        printf("%s", j == i - 1 || j == 0 ? "#" : " ");
     printf("\n");
 }
-void border_print(const char *str, int i)
+/*border column 3*/
+void border_3(const char *str, int i)
 {
     int j = i;
-    while (j-- > 0)
-        printf("%s", !j ? "#\n" : "#");
-    help_border(str, i);
-    j = i;
     printf("%s  %s", "#", str);
     j -= strlen(str) + 4;
     while (j-- > 0)
         printf(" ");
     printf("#\n");
-    help_border(str, i);
-    j = i;
-    while (j-- > 0)
-        printf("%s", !j ? "#\n" : "#");
 }
+void border_print(const char *str, int i)
+{
+    border_1_5(str, i);
+    border_2_4(str, i);
+    border_3(str, i);
+    border_2_4(str, i);
+    border_1_5(str, i);
+}
+
 void search()
 {
     /*test1 start read data by the data's key*/
@@ -80,8 +89,7 @@ int main(void)
         delete();
     }
 #endif
-    border_print("hello", 80);
-    border_print("hello Alice", 80);
-    border_print("hello Jack", 80);
+    border_print("hello", 100);
+
     return 0;
 }
